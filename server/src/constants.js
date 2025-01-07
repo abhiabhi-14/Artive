@@ -1,1 +1,1 @@
-export const DB_NAME = "blog-database"
+export const DB_NAME = "Artive";
