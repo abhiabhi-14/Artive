@@ -9,7 +9,7 @@ import {
 	getUser,
 	deleteUser,
 	allUsers,
-	adminDeleteUser,,
+	adminDeleteUser,
 } from "../controllers/user.controllers.js";
 import {
 	registrationSchema,
@@ -21,14 +21,13 @@ import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { validate } from "../middlewares/validate.middleware.js";
 import { isAdmin } from "../middlewares/admin.middleware.js";
 
-
 const router = Router();
 
 router.route("/register").post(validate(registrationSchema), registerUser);
 
 router.route("/login").post(validate(loginSchema), loginUser);
 
-router.route("/logout").post(verifyJWT, logoutUser);	
+router.route("/logout").post(verifyJWT, logoutUser);
 
 router.route("/delete").delete(verifyJWT, deleteUser);
 
@@ -46,7 +45,8 @@ router
 	.route("/update-user-details")
 	.patch(verifyJWT, validate(updateUserSchema), updateUserFields);
 
-router.route("/admin-delete/:userId").delete(verifyJWT,isAdmin,adminDeleteUser);
-
+router
+	.route("/admin-delete/:userId")
+	.delete(verifyJWT, isAdmin, adminDeleteUser);
 
 export default router;
