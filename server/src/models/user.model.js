@@ -15,8 +15,7 @@ const userSchema = new mongoose.Schema(
             type:String,
             required:true,
             unique:true,
-            trim:true,
-            match:[/.+@iiitkota.ac.in/,'Please enter a valid email address']
+            trim:true
         },
         password:{
             type:String,

@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { Likes } from "./likes.model";
+import { Likes } from "./likes.model.js";
 
 const photoSchema = mongoose.Schema(
     {

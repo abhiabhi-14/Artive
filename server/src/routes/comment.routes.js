@@ -8,7 +8,7 @@ import {
 	deleteCommentAdmin,
 } from "../controllers/comment.controllers.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
-import { isAdmin } from "../middlewares/admin.midleware.js";
+import { isAdmin } from "../middlewares/admin.middleware.js";
 
 const router = Router();
 

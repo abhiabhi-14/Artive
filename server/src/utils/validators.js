@@ -32,6 +32,13 @@ const registrationSchema = z.object({
 	username: isUsername,
 	email: isEmail,
 	password: passwordComplexity,
+	role: z.enum(["user", "admin"]),
+	key: z.string().optional()
+})
+.refine((data) => data.role !== "admin" || (data.key && data.key.length > 0),
+{
+    message: "Key is required when role is admin",
+    path: ["key"], // Targets the 'key' field in error messages
 });
 
 const loginSchema = z.object({

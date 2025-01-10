@@ -1,4 +1,4 @@
-import { User } from "../models/user.models.js";
+import { User } from "../models/user.model.js";
 import { Comment } from "../models/comment.models.js";
 import { Post } from "../models/post.models.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
