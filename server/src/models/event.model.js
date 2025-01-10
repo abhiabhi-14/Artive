@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { Likes } from "../models/likes.model";
+import { Likes } from "../models/likes.model.js";
 
 const eventSchema = mongoose.Schema(
 	{

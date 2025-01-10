@@ -1,7 +1,11 @@
 import { asyncHandler } from "../utils/AsyncHandler.js";
-import { Testimonial } from "../models/testimonial.models.js"; // Updated to Testimonial
+import { Testimonial } from "../models/testimonial.model.js"; // Updated to Testimonial
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import {
+	deleteFromCloudinary,
+	uploadOnCloudinary,
+} from "../utils/cloudinary.js";
 import mongoose from "mongoose";
 
 // Fetch all testimonials
@@ -123,16 +127,33 @@ const getTestimonialsForUser = asyncHandler(async (req, res) => {
 
 // Create a new testimonial
 const createTestimonial = asyncHandler(async (req, res) => {
-	const { description, userId, profilePhoto } = req.body;
+	const userId = req.user?._id;
+	const {description} = req.body;
+
+	const imageLocalPath = req?.file?.path;
+    if (!imageLocalPath){
+        throw new ApiError(400, "Photo image is required");
+    }
+
+    // Upload image to Cloudinary
+    const imageCloudObject = await uploadOnCloudinary(imageLocalPath);
+    const imageCloudUrl = imageCloudObject?.url;
+
+    if (!imageCloudUrl) {
+        throw new ApiError(500, "Failed to upload image on Cloudinary");
+    }
 
 	const testimonial = await Testimonial.create({
 		name: userId, // Assuming the name field is the user who created the testimonial
 		description,
-		profilePhoto,
+		profilePhoto: imageCloudUrl,
 	});
 
-	const createdTestimonial = await Testimonial.findById(testimonial?._id);
-
+	const createdTestimonial = await Testimonial.findById(testimonial._id).populate(
+			"name",
+			"username email"
+		);
+	
 	if (!createdTestimonial) {
 		throw new ApiError(
 			500,
