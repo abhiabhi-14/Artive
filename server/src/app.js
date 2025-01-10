@@ -33,7 +33,7 @@ import eventRoutes from './routes/event.route.js';
 import testimonialRoutes from './routes/testimonial.route.js';
 import postRoutes from "./routes/post.routes.js";
 import commentRoutes from "./routes/comment.routes.js";
-import likeRoutes from "./routes/like.routes.js";
+import likeRoutes from "./routes/like.route.js";
 import dashboardRoutes from "./routes/dashboard.routes.js";
 
 // !routes declare

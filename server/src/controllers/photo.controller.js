@@ -79,7 +79,7 @@ const getPhoto = asyncHandler(async (req, res) => {
                 isLiked: {
                     $in: [
                         new mongoose.Types.ObjectId(userId),
-                        "$photoLikes.userId",
+                        "$photoLikes.user",
                     ],
                 },
             },

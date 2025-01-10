@@ -1,9 +1,9 @@
-import { asyncHandler } from "../utils/AsyncHandler";
-import { Like } from "../models/likes.model";
-import { Photo } from "../models/photo.model";
-import { Event } from "../models/event.model";
-import { ApiError } from "../utils/ApiError";
-import { ApiResponse } from "../utils/ApiResponse";
+import { asyncHandler } from "../utils/AsyncHandler.js";
+import { Likes } from "../models/likes.model.js";
+import { Photo } from "../models/photo.model.js";
+import { Event } from "../models/event.model.js";
+import { ApiError } from "../utils/ApiError.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
 
 const likePhoto = asyncHandler(async (req, res) => {
 	const photoId = req.params?.photoId; // Consistent parameter naming
@@ -14,12 +14,12 @@ const likePhoto = asyncHandler(async (req, res) => {
 		throw new ApiError(404, "Photo not found");
 	}
 
-	const existingLike = await Like.findOne({ photoId, userId });
+	const existingLike = await Likes.findOne({ userId, photoId });
 	if (existingLike) {
 		throw new ApiError(400, "You have already liked the photo");
 	}
 
-	const like = await Like.create({ photoId, userId });
+	const like = await Likes.create({ user: userId, photo: photoId });
 
 	return res.status(201).json(new ApiResponse(201, like, "Like created"));
 });
@@ -33,12 +33,12 @@ const likeEvent = asyncHandler(async (req, res) => {
 		throw new ApiError(404, "Event not found");
 	}
 
-	const existingLike = await Like.findOne({ eventId, userId });
+	const existingLike = await Likes.findOne({ eventId, userId });
 	if (existingLike) {
 		throw new ApiError(400, "You have already liked the event");
 	}
 
-	const like = await Like.create({ eventId, userId });
+	const like = await Likes.create({ eventId, userId });
 
 	return res.status(201).json(new ApiResponse(201, like, "Like created"));
 });
@@ -47,7 +47,7 @@ const unlikePhoto = asyncHandler(async (req, res) => {
 	const photoId = req.params?.photoId; // Consistent parameter naming
 	const userId = req.user._id;
 
-	const like = await Like.findOneAndDelete({ photoId, userId });
+	const like = await Likes.findOneAndDelete({ photoId, userId });
 	if (!like) {
 		throw new ApiError(404, "Like not found or not authorized");
 	}
@@ -61,7 +61,7 @@ const unlikeEvent = asyncHandler(async (req, res) => {
 	const eventId = req.params?.eventId; // Consistent parameter naming
 	const userId = req.user._id;
 
-	const like = await Like.findOneAndDelete({ eventId, userId });
+	const like = await Likes.findOneAndDelete({ eventId, userId });
 	if (!like) {
 		throw new ApiError(404, "Like not found or not authorized");
 	}
