@@ -28,15 +28,17 @@ app.get("/", (req, res) => {
 
 // !routes import
 import userRoutes from "./routes/user.routes.js";
-import EventRoutes from "./routes/post.routes.js";
-import TestamonialRoutes from "./routes/comment.routes.js";
+import photoRoutes from "./routes/photo.route.js";
+import postRoutes from "./routes/post.routes.js";
+import commentRoutes from "./routes/comment.routes.js";
 import likeRoutes from "./routes/like.routes.js";
 import dashboardRoutes from "./routes/dashboard.routes.js";
 
 // !routes declare
 app.use("/api/v1/users", userRoutes);
-app.use("/api/v1/events", EventRoutes);
-app.use("/api/v1/testamonials", TestamonialRoutes);
+app.use("/api/v1/posts", postRoutes);
+app.use("/api/v1/photo", photoRoutes);
+app.use("/api/v1/comments", commentRoutes);
 app.use("/api/v1/likes", likeRoutes);
 app.use("/api/v1/dashboard", dashboardRoutes);
 

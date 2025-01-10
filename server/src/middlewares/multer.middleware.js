@@ -18,11 +18,11 @@ const upload = multer({
 		if (file.mimetype === "image/png" || file.mimetype === "image/jpeg") {
 			cb(null, true);
 		} else {
-			cb(new Error("Only .png and .jpg files are allowed"), false);
+			cb(new Error("Only .png and .jpeg files are allowed"), false);
 		}
 	},
 	limits: {
-		fileSize: 1024 * 1024 * 5, // 5MB file size limit
+		fileSize: 1024 * 1024 * 10, // 10MB file size limit
 	},
 });
 

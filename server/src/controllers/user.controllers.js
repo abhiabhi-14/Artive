@@ -1,14 +1,10 @@
 import { asyncHandler } from "../utils/AsyncHandler.js";
-import { User } from "../models/user.models.js";
+import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import {
-	deleteFromCloudinary,
-	uploadOnCloudinary,
-} from "../utils/cloudinary.js";
 import jwt from "jsonwebtoken";
-import { OAuth2Client } from "google-auth-library";
-import generatePassword from "generate-password";
+import crypto from "crypto";
+
 
 const generateAccessAndRefreshToken = async (id) => {
 	try {
@@ -28,88 +24,24 @@ const generateAccessAndRefreshToken = async (id) => {
 	}
 };
 
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-
-const googleAuthHandler = asyncHandler(async (req, res) => {
-	const { token } = req.body;
-
-	if (!token) {
-		throw new ApiError(400, "Google token is required");
-	}
-
-	// Verify the Google token
-	const ticket = await client.verifyIdToken({
-		idToken: token,
-		audience: process.env.GOOGLE_CLIENT_ID,
-	});
-
-	const { email, picture } = ticket.getPayload();
-
-	// Check for existing user using email
-	let user = await User.findOne({ email: email.toLowerCase() });
-
-	if (!user) {
-		// Create a secure random password
-		const password = generatePassword.generate({
-			length: 12,
-			numbers: true,
-			symbols: true,
-			uppercase: true,
-			lowercase: true,
-			strict: true,
-		});
-
-		// Generate a unique username
-		let username = email.split("@")[0].toLowerCase();
-		let usernameExists = await User.findOne({ username });
-		while (usernameExists) {
-			username = username + Math.random().toString(36).slice(-4);
-			usernameExists = await User.findOne({ username });
-		}
-
-		// Create new user if doesn't exist
-		user = await User.create({
-			username,
-			email: email.toLowerCase(),
-			avatar: picture,
-			password
-		});
-	}
-
-	const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
-		user._id
-	);
-
-	const options = {
-		httpOnly: true,
-		secure: true,
-		sameSite: 'None',
-	};
-
-	const userObject = user.toObject();
-	delete userObject.password;
-	delete userObject.refreshToken;
-
-	return res
-		.status(200)
-		.cookie("accessToken", accessToken, options)
-		.cookie("refreshToken", refreshToken, options)
-		.json(
-			new ApiResponse(
-				200,
-				{
-					user: userObject,
-					accessToken,
-					refreshToken,
-				},
-				"User authenticated successfully with Google"
-			)
-		);
-});
-
 const registerUser = asyncHandler(async (req, res) => {
 	// Get data from the request
-	const { username, email, password } = req.body;
+	const { username, email, password,role,key} = req.body;
+
+
+if (role === "admin") {
+    // Convert both the stored key and the provided key to Buffer objects
+    const adminKeyBuffer = Buffer.from(process.env.ADMIN_KEY, "utf-8");
+    const providedKeyBuffer = Buffer.from(key || "", "utf-8");
+
+    // Check if lengths match before using timingSafeEqual
+    if (
+        adminKeyBuffer.length !== providedKeyBuffer.length ||
+        !crypto.timingSafeEqual(adminKeyBuffer, providedKeyBuffer)
+    ) {
+        throw new ApiError(401, "Invalid Key for Admin Registration");
+    }
+}
 
 	// Check for existing user using username and email
 	const existingUser = await User.findOne({
@@ -124,24 +56,12 @@ const registerUser = asyncHandler(async (req, res) => {
 	}
 
 	// Handle avatar upload if present
-	let avatarCloudUrl = null;
-	const avatarLocalPath = req?.file?.path;
-
-	if (avatarLocalPath) {
-		const avatarCloudObject = await uploadOnCloudinary(avatarLocalPath);
-		avatarCloudUrl = avatarCloudObject?.url;
-
-		if (!avatarCloudUrl) {
-			throw new Error("Avatar upload failed");
-		}
-	}
-
 	// Create new document in the database
 	const user = await User.create({
+		username: username.toLowerCase(),
 		email: email.toLowerCase(),
 		password,
-		username: username.toLowerCase(),
-		avatar: avatarCloudUrl,
+		role,
 	});
 
 	// Check for the created user and exclude password and refreshToken
@@ -429,49 +349,7 @@ const getUser = asyncHandler(async (req, res) => {
 	);
 });
 
-const updateAvatar = asyncHandler(async (req, res) => {
-	// get new avatar file -> error
-	// upload new on cloudinary -> error
-	// update in the database
-	// delete prev from db
 
-	const newAvatarLocalPath = req.file?.path;
-
-	if (!newAvatarLocalPath) {
-		throw new ApiError(400, "new Avatar file required");
-	}
-
-	const newAvatarCloudObject = await uploadOnCloudinary(newAvatarLocalPath);
-
-	const newAvatarCloudUrl = newAvatarCloudObject?.url;
-	// const newAvatarPublicId = newAvatarCloudObject?.public_id;
-
-	if (!newAvatarCloudUrl) {
-		throw new ApiError(
-			500,
-			"unable to upload new avatar file on cloudinary"
-		);
-	}
-
-	const user = await User.findByIdAndUpdate(req.user._id, {
-		$set: {
-			avatar: newAvatarCloudUrl,
-		},
-	});
-
-	const oldAvatarUrl = user.avatar;
-	const publicId = oldAvatarUrl
-		? oldAvatarUrl.split("/").slice(-1)[0].split(".")[0]
-		: null;
-
-	await deleteFromCloudinary(publicId);
-
-	user.avatar = newAvatarCloudUrl;
-
-	return res
-		.status(200)
-		.json(new ApiResponse(200, user, "avatar changed successfully"));
-});
 
 
 const adminDeleteUser = asyncHandler(async (req, res) => {
@@ -496,9 +374,7 @@ export {
 	changeExistingPassword,
 	updateUserFields,
 	getUser,
-	updateAvatar,
 	deleteUser,
 	allUsers,
-	googleAuthHandler,
 	adminDeleteUser,
 };
