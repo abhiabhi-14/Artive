@@ -10,7 +10,7 @@ import {
 } from "../controllers/post.controllers.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
-import { isAdmin } from "../middlewares/admin.midleware.js";
+import { isAdmin } from "../middlewares/admin.middleware.js";
 
 const router = Router();
 

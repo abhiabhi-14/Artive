@@ -11,7 +11,7 @@ import {
 	deleteUser,
 	allUsers,
 	googleAuthHandler,
-	adminDeleteUser
+	adminDeleteUser,
 } from "../controllers/user.controllers.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import {
@@ -22,7 +22,7 @@ import {
 } from "../utils/validators.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { validate } from "../middlewares/validate.middleware.js";
-import { isAdmin } from "../middlewares/admin.midleware.js";
+import { isAdmin } from "../middlewares/admin.middleware.js";
 
 const router = Router();
 
@@ -32,13 +32,13 @@ router
 
 router.route("/login").post(validate(loginSchema), loginUser);
 
-router.route("/logout").post(verifyJWT, logoutUser);	
+router.route("/logout").post(verifyJWT, logoutUser);
 
 router.route("/google").post(googleAuthHandler);
 
-router.route("/delete").delete(verifyJWT,deleteUser)
+router.route("/delete").delete(verifyJWT, deleteUser);
 
-router.route('/all-users').get(verifyJWT,isAdmin,allUsers);
+router.route("/all-users").get(verifyJWT, isAdmin, allUsers);
 
 router.route("/generate-token").post(refreshAccessToken);
 
@@ -56,7 +56,8 @@ router
 	.route("/update-avatar")
 	.patch(verifyJWT, upload.single("avatar"), updateAvatar);
 
-router.route("/admin-delete/:userId").delete(verifyJWT,isAdmin,adminDeleteUser);
-
+router
+	.route("/admin-delete/:userId")
+	.delete(verifyJWT, isAdmin, adminDeleteUser);
 
 export default router;

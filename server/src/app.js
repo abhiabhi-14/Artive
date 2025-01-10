@@ -8,8 +8,8 @@ const app = express();
 //? CORS config
 const corsOptions = {
 	origin: process.env.ALLOWED_ORIGINS,
-	credentials: process.env.CREDENTIALS === 'true',
-	methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
+	credentials: process.env.CREDENTIALS === "true",
+	methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
 };
 
 app.use(cors(corsOptions));
@@ -28,15 +28,15 @@ app.get("/", (req, res) => {
 
 // !routes import
 import userRoutes from "./routes/user.routes.js";
-import postRoutes from "./routes/post.routes.js";
-import commentRoutes from "./routes/comment.routes.js"
-import likeRoutes from "./routes/like.routes.js"
-import dashboardRoutes from "./routes/dashboard.routes.js"
+import EventRoutes from "./routes/post.routes.js";
+import TestamonialRoutes from "./routes/comment.routes.js";
+import likeRoutes from "./routes/like.routes.js";
+import dashboardRoutes from "./routes/dashboard.routes.js";
 
 // !routes declare
 app.use("/api/v1/users", userRoutes);
-app.use("/api/v1/posts", postRoutes);
-app.use("/api/v1/comments", commentRoutes);
+app.use("/api/v1/events", EventRoutes);
+app.use("/api/v1/testamonials", TestamonialRoutes);
 app.use("/api/v1/likes", likeRoutes);
 app.use("/api/v1/dashboard", dashboardRoutes);
 

@@ -173,30 +173,30 @@ const createComment = asyncHandler(async (req, res) => {
 		);
 });
 
-const updateComment = asyncHandler(async (req, res) => {
-	const { content } = req.body;
+// const updateComment = asyncHandler(async (req, res) => {
+// 	const { content } = req.body;
 
-	const commentId = req.params?.commentId;
-	const userId = req.user._id;
+// 	const commentId = req.params?.commentId;
+// 	const userId = req.user._id;
 
-	const comment = await Comment.findOneAndUpdate(
-		{ _id: commentId, userId },
-		{ content },
-		{ new: true }
-	);
+// 	const comment = await Comment.findOneAndUpdate(
+// 		{ _id: commentId, userId },
+// 		{ content },
+// 		{ new: true }
+// 	);
 
-	if (!comment) {
-		throw new ApiError(
-			404,
-			"Comment not found or not authorized to update this comment"
-		);
-	}
+// 	if (!comment) {
+// 		throw new ApiError(
+// 			404,
+// 			"Comment not found or not authorized to update this comment"
+// 		);
+// 	}
 
-	// Return updated user
-	return res
-		.status(200)
-		.json(new ApiResponse(200, comment, "Comment updated successfully"));
-});
+// 	// Return updated user
+// 	return res
+// 		.status(200)
+// 		.json(new ApiResponse(200, comment, "Comment updated successfully"));
+// });
 
 const deleteComment = asyncHandler(async (req, res) => {
 	const commentId = req.params?.commentId;
@@ -242,7 +242,7 @@ export {
 	getCommentsForPost,
 	allComments,
 	createComment,
-	updateComment,
+	//updateComment,
 	deleteComment,
 	deleteCommentAdmin,
 };
