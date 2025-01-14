@@ -7,9 +7,13 @@ const photoSchema = mongoose.Schema(
             type:String,
             required:true
         },
-        author:{
-            type:mongoose.Schema.Types.ObjectId,
-            ref:"User"
+        member: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Member", 
+        },
+        event: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Event", 
         },
         content:{
             type:String,

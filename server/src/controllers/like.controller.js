@@ -47,7 +47,7 @@ const unlikePhoto = asyncHandler(async (req, res) => {
 	const photoId = req.params?.photoId; // Consistent parameter naming
 	const userId = req.user._id;
 
-	const like = await Likes.findOneAndDelete({ photoId, userId });
+	const like = await Likes.findOneAndDelete({ photo:photoId, user:userId });
 	if (!like) {
 		throw new ApiError(404, "Like not found or not authorized");
 	}

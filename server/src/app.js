@@ -34,6 +34,7 @@ import testimonialRoutes from './routes/testimonial.route.js';
 import postRoutes from "./routes/post.routes.js";
 import commentRoutes from "./routes/comment.routes.js";
 import likeRoutes from "./routes/like.route.js";
+import  MemberRoutes  from "./routes/member.route.js";
 import dashboardRoutes from "./routes/dashboard.routes.js";
 
 // !routes declare
@@ -43,6 +44,7 @@ app.use("/api/v1/photo", photoRoutes);
 app.use("/api/v1/event", eventRoutes);
 app.use("/api/v1/testimonial", testimonialRoutes);
 app.use("/api/v1/comments", commentRoutes);
+app.use("/api/v1/members", MemberRoutes);
 app.use("/api/v1/likes", likeRoutes);
 app.use("/api/v1/dashboard", dashboardRoutes);
 
