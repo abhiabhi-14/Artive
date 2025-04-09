@@ -10,7 +10,7 @@ import {
 	deleteUser,
 	allUsers,
 	adminDeleteUser,
-} from "../controllers/user.controllers.js";
+} from "../controllers/user.controller.js";
 import {
 	registrationSchema,
 	loginSchema,

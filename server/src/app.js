@@ -27,26 +27,20 @@ app.get("/", (req, res) => {
 });
 
 // !routes import
-import userRoutes from "./routes/user.routes.js";
+import userRoutes from "./routes/user.route.js";
 import photoRoutes from "./routes/photo.route.js";
-import eventRoutes from './routes/event.route.js';
-import testimonialRoutes from './routes/testimonial.route.js';
-import postRoutes from "./routes/post.routes.js";
-import commentRoutes from "./routes/comment.routes.js";
+import eventRoutes from "./routes/event.route.js";
+import testimonialRoutes from "./routes/testimonial.route.js";
 import likeRoutes from "./routes/like.route.js";
-import  MemberRoutes  from "./routes/member.route.js";
-import dashboardRoutes from "./routes/dashboard.routes.js";
+import MemberRoutes from "./routes/member.route.js";
 
 // !routes declare
 app.use("/api/v1/users", userRoutes);
-app.use("/api/v1/posts", postRoutes);
 app.use("/api/v1/photo", photoRoutes);
 app.use("/api/v1/event", eventRoutes);
 app.use("/api/v1/testimonial", testimonialRoutes);
-app.use("/api/v1/comments", commentRoutes);
 app.use("/api/v1/members", MemberRoutes);
 app.use("/api/v1/likes", likeRoutes);
-app.use("/api/v1/dashboard", dashboardRoutes);
 
 app.use(errorMiddleware);
 
