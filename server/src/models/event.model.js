@@ -36,14 +36,11 @@ const eventSchema = mongoose.Schema(
 			required: true,
 		},
 		dateOfEvent: {
-			type: Date,
+			type: String,
 			required: true,
 		},
 		photos: [
-			{
-				type: mongoose.Schema.Types.ObjectId,
-				ref: "Photo"
-			}
+			String
 		],
 	},
 	{

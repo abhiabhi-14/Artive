@@ -108,7 +108,6 @@ const createEvent = asyncHandler(async (req, res) => {
 		imageLocalPaths.map((path) => uploadOnCloudinary(path))
 	);
 	const photos = imageCloudObjects.map((obj) => obj.url);
-
 	if (!photos.length) {
 		throw new ApiError(
 			500,
@@ -171,7 +170,7 @@ const deleteEvent = asyncHandler(async (req, res) => {
 });
 
 const searchEvent = asyncHandler(async (req, res) => {
-	const { searchString, startDate, endDate } = req.query;
+	const { searchString } = req.query;
 	const page = parseInt(req.query.page) || 1;
 	const limit = parseInt(req.query.limit) || 10;
 	const skip = (page - 1) * limit;
@@ -186,17 +185,6 @@ const searchEvent = asyncHandler(async (req, res) => {
 					{ description: { $regex: searchString, $options: "i" } },
 					{ slug: { $regex: searchString, $options: "i" } },
 				],
-			},
-		});
-	}
-
-	if (startDate || endDate) {
-		pipeline.push({
-			$match: {
-				dateOfEvent: {
-					...(startDate && { $gte: new Date(startDate) }),
-					...(endDate && { $lte: new Date(endDate) }),
-				},
 			},
 		});
 	}

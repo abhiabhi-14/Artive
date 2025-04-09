@@ -203,11 +203,10 @@ const deleteTestimonial = asyncHandler(async (req, res) => {
 
 // Admin delete a testimonial (by admin)
 const deleteTestimonialAdmin = asyncHandler(async (req, res) => {
-	const testimonialId = req.params?.testimonialId;
-
+	const testimonialId = req.params?.TestimonialId;
 	// Delete the testimonial in the database
 	const deletedTestimonial = await Testimonial.findOneAndDelete({
-		_id: testimonialId,
+		_id: testimonialId,	
 	});
 
 	if (!deletedTestimonial) {
