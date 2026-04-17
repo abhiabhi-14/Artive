@@ -9,9 +9,15 @@ const memberSchema = mongoose.Schema(
 		},
 		name: {
 			type: String,
+			required:true,
+            unique:true,
 		},
 		description: {
 			type: String,
+			required:true,
+			maxlength: 500,
+			minlength: 10,
+			trim: true,
 		},
 		profilePhoto: {
 			type: String,

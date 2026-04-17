@@ -29,69 +29,87 @@ const registerUser = asyncHandler(async (req, res) => {
     // Get data from the request
     const { username, email, password, role, key,} = req.body;
 
-    if (role === "admin") {
-        // Convert both the stored key and the provided key to Buffer objects
-        const adminKeyBuffer = Buffer.from(process.env.ADMIN_KEY, "utf-8");
-        const providedKeyBuffer = Buffer.from(key || "", "utf-8");
+    console.log("Registration attempt:", { username, email, role, passwordLength: password?.length });
 
-        // Check if lengths match before using timingSafeEqual
-        if (
-            adminKeyBuffer.length !== providedKeyBuffer.length ||
-            !crypto.timingSafeEqual(adminKeyBuffer, providedKeyBuffer)
-        ) {
-            throw new ApiError(401, "Invalid Key for Admin Registration");
+    try {
+        if (role === "admin") {
+            // Convert both the stored key and the provided key to Buffer objects
+            const adminKeyBuffer = Buffer.from(process.env.ADMIN_KEY, "utf-8");
+            const providedKeyBuffer = Buffer.from(key || "", "utf-8");
+
+            // Check if lengths match before using timingSafeEqual
+            if (
+                adminKeyBuffer.length !== providedKeyBuffer.length ||
+                !crypto.timingSafeEqual(adminKeyBuffer, providedKeyBuffer)
+            ) {
+                throw new ApiError(401, "Invalid Key for Admin Registration");
+            }
         }
-    }
 
-    // Check for existing user using username and email
-    const existingUser = await User.findOne({
-        $or: [
-            { username: username.toLowerCase() },
-            { email: email.toLowerCase() },
-        ],
-    });
-
-    if (existingUser) {
-        throw new ApiError(400, "User with username or email already exists");
-    }
-
-    // Create new User document in the database
-    const user = await User.create({
-        username: username.toLowerCase(),
-        email: email.toLowerCase(),
-        password,
-        role,
-    });
-
-    // If the user is an admin, also create a corresponding Member record
-    let member = null;
-    if (role === "admin") {
-        member = await Member.create({
-            userId: user._id,
-            name: "",
-            description: "", 
-            profilePhoto: null, 
-            photos: [],
-            displayed: true,
-            role: "default", 
+        console.log("Checking for existing user...");
+        // Check for existing user using username and email
+        const existingUser = await User.findOne({
+            $or: [
+                { username: username.toLowerCase() },
+                { email: email.toLowerCase() },
+            ],
         });
+
+        if (existingUser) {
+            console.log("User already exists:", existingUser.username);
+            throw new ApiError(400, "User with username or email already exists");
+        }
+
+        console.log("Creating user...");
+        // Create new User document in the database
+        const user = await User.create({
+            username: username.toLowerCase(),
+            email: email.toLowerCase(),
+            password,
+            role,
+        });
+
+        console.log("User created successfully:", user._id);
+
+        // If the user is an admin, also create a corresponding Member record
+        let member = null;
+if (role === "admin") {
+  try {
+    member = await Member.create({
+      userId: user._id,
+      name: username,
+      description: "Admin member profile",
+      profilePhoto: null,
+      photos: [],
+      displayed: true,
+      role: "default",
+    });
+  } catch (memberError) {
+    console.error("Member creation error:", memberError);
+    throw new ApiError(500, "Failed to create member profile: " + memberError.message);
+  }
+}
+
+        // Check for the created user and exclude password and refreshToken
+        const createdUser = await User.findById(user._id).select("-password -refreshToken");
+
+        if (!createdUser) {
+            throw new ApiError(500, "Something went wrong while registering the user in the database");
+        }
+
+        console.log("Registration successful for user:", createdUser.username);
+        // Response data including created user and optionally created member
+        const responseData = {
+            user: createdUser,
+            member: member || null,
+        };
+
+        // Return the response
+        return res.status(201).json(new ApiResponse(201, responseData, "User registered Successfully"));
+    } catch (error) {
+        console.error("Registration error:", error);
+        throw error; // Re-throw to let asyncHandler handle it
     }
-
-    // Check for the created user and exclude password and refreshToken
-    const createdUser = await User.findById(user._id).select("-password -refreshToken");
-
-    if (!createdUser) {
-        throw new ApiError(500, "Something went wrong while registering the user in the database");
-    }
-
-    // Response data including created user and optionally created member
-    const responseData = {
-        user: createdUser,
-        member: member || null,
-    };
-
-    // Return the response
-    return res.status(201).json(new ApiResponse(201, responseData, "User registered Successfully"));
 });
 
 

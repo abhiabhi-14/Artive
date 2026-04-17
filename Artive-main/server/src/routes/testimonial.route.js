@@ -27,9 +27,9 @@ import { isAdmin } from "../middlewares/admin.middleware.js";
 const router = Router();
 
 // FIX: changed :postId → :userId so controller's req.params?.userId resolves
-router.route("/user/:userId").get(verifyJWT, getTestimonialsForUser);
+router.route("/user/:userId").get(getTestimonialsForUser);
 
-router.route("/all-Testimonials").get(verifyJWT, isAdmin, allTestimonials);
+router.route("/all-Testimonials").get(allTestimonials);
 
 router.route("/create").post(verifyJWT, upload.single("image"), createTestimonial);
 

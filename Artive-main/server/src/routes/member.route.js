@@ -21,6 +21,7 @@ import {
 	updateMember,
 	uploadProfilePhoto,
 	replaceProfilePhoto,
+	createMember,
 } from "../controllers/member.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 
@@ -30,6 +31,9 @@ const router = Router();
 router.route("/all-members").get(verifyJWT, getAllMembers);
 
 // These remain admin-only (managing own member profile)
+router
+  .route("/create")
+  .post(verifyJWT, isAdmin, upload.single("profilePhoto"), createMember);
 router.route("/get-member").get(verifyJWT, isAdmin, getMember);
 router.route("/update").patch(verifyJWT, isAdmin, updateMember);
 router.route("/upload-profile-photo").post(verifyJWT, isAdmin, upload.single("profilePhoto"), uploadProfilePhoto);

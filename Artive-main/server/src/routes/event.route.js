@@ -14,10 +14,10 @@ import {
 const router = Router();
 
 // Route to get all events
-router.route("/all-events").get(verifyJWT, allEvents);
+router.route("/all-events").get(allEvents);
 
 // Route to get a single event by slug
-router.route("/get-events/:slug").get(verifyJWT, getEvent);
+router.route("/get-events/:slug").get(getEvent);
 
 // Route to create a new event (admin only)
 router
@@ -28,6 +28,6 @@ router
 router.route("/delete/:eventId").delete(verifyJWT, isAdmin, deleteEvent);
 
 // Route to search events
-router.route("/search").get(verifyJWT, searchEvent);
+router.route("/search").get(searchEvent);
 
 export default router;

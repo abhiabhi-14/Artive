@@ -7,8 +7,17 @@ const app = express();
 
 //? CORS config
 const corsOptions = {
-	origin: process.env.ALLOWED_ORIGINS,
-	credentials: process.env.CREDENTIALS === "true",
+	origin: function (origin, callback) {
+		const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",").map(o => o.trim()) || ["http://localhost:5173"];
+		
+		// Allow requests with no origin (like mobile apps or Postman)
+		if (!origin || allowedOrigins.includes(origin)) {
+			callback(null, true);
+		} else {
+			callback(new Error("Not allowed by CORS"));
+		}
+	},
+	credentials: true,
 	methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
 };
 

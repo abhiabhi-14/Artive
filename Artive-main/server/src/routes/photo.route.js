@@ -11,9 +11,9 @@ import { isAdmin } from "../middlewares/admin.middleware.js";
 
 const router = Router();
 
-router.route("/all-photo").get(verifyJWT, allPhoto);
+router.route("/all-photo").get(allPhoto);
 
-router.route("/get-photo/:id").get(verifyJWT, getPhoto);
+router.route("/get-photo/:id").get(getPhoto);
 
 router
 	.route("/create")
